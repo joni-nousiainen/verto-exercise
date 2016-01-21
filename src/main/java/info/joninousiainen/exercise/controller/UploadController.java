@@ -29,7 +29,7 @@ public class UploadController {
             method = RequestMethod.POST
     )
     public ResponseEntity<String> upload(@Valid @RequestBody String body) {
-        log.info("Received upload: {}", body);
+        log.info("Upload: {}", body);
 
         String[] strings = body.split("\\s");
         Set<String> set = new LinkedHashSet<>(Arrays.asList(strings));

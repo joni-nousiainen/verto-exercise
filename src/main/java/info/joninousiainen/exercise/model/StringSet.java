@@ -6,6 +6,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -16,11 +18,15 @@ public class StringSet implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> strings;
 
-    public StringSet() {
+    private StringSet() {
     }
 
-    public StringSet(Set<String> strings) {
+    public StringSet(Collection<String> strings) {
         getStrings().addAll(strings);
+    }
+
+    public StringSet(String... strings) {
+        this(Arrays.asList(strings));
     }
 
     public Long getId() {
