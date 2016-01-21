@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @RestController
 public class UploadController {
@@ -25,14 +28,23 @@ public class UploadController {
             value = "/upload",
             method = RequestMethod.POST
     )
-    public ResponseEntity<Long> upload(@Valid @RequestBody String body) {
+    public ResponseEntity<String> upload(@Valid @RequestBody String body) {
         log.info("Received upload: {}", body);
 
         String[] strings = body.split("\\s");
-        StringSet stringSet = new StringSet(strings);
-        StringSet savedStringSet = stringSetRepository.save(stringSet);
+        Set<String> set = new LinkedHashSet<>(Arrays.asList(strings));
 
-        ResponseEntity<Long> response = new ResponseEntity<Long>(savedStringSet.getId(), HttpStatus.CREATED);
+        boolean containsDuplicates = strings.length != set.size();
+        ResponseEntity<String> response;
+
+        if (containsDuplicates) {
+            response = new ResponseEntity<String>("set must not contain duplicate strings", HttpStatus.BAD_REQUEST);
+        }
+        else {
+            StringSet stringSet = new StringSet(set);
+            StringSet savedStringSet = stringSetRepository.save(stringSet);
+            response = new ResponseEntity<>(savedStringSet.getId().toString(), HttpStatus.CREATED);
+        }
 
         return response;
     }

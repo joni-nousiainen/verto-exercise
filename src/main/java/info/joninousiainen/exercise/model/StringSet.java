@@ -6,7 +6,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -20,8 +19,8 @@ public class StringSet implements Serializable {
     public StringSet() {
     }
 
-    public StringSet(String[] strings) {
-        getStrings().addAll(Arrays.asList(strings));
+    public StringSet(Set<String> strings) {
+        getStrings().addAll(strings);
     }
 
     public Long getId() {

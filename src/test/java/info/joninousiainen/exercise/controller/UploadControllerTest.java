@@ -1,7 +1,6 @@
 package info.joninousiainen.exercise.controller;
 
 import info.joninousiainen.exercise.App;
-import info.joninousiainen.exercise.model.StringSet;
 import info.joninousiainen.exercise.repo.StringSetRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,14 +35,22 @@ public class UploadControllerTest {
     public void FourSimpleStrings() {
         ResponseEntity<String> response = upload("one two\nthree\tfour");
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals("1", response.getBody());
 
-        Set<String> strings = stringSetRepository.findOne(1l).getStrings();
+        Long id = Long.parseLong(response.getBody());
+
+        Set<String> strings = stringSetRepository.findOne(id).getStrings();
         assertEquals(4, strings.size());
-        assertThat(strings, hasItems("one", "two", "three"));
+        assertThat(strings, hasItems("one", "two", "three", "four"));
     }
 
     private ResponseEntity<String> upload(String request) {
         return restTemplate.postForEntity("http://localhost:" + port + "/upload", request, String.class);
+    }
+
+    @Test
+    public void CheckForDuplicateStrings() {
+        ResponseEntity<String> response = upload("one two two three");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("set must not contain duplicate strings", response.getBody());
     }
 }
